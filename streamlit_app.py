@@ -43,19 +43,19 @@ if dataset_name == "Student Performance":
     # Questions to Answer
     st.subheader("Research Questions")
     st.write("""
-    1. How do students' math, reading, and writing scores correlate, and are there patterns based on demographics?
+    1. How does study time, absences, and parental support influence GPA?
     2. Are there performance differences across demographic groups, such as gender or parental education level?
     """)
 
     # Data Visualization
-    st.subheader("Correlation of Academic Scores")
+    st.subheader("Distribution of GPA")
     fig, ax = plt.subplots()
-    sns.heatmap(data1[['math score', 'reading score', 'writing score']].corr(), annot=True, cmap='coolwarm', ax=ax)
+    sns.histplot(data1['GPA'], kde=True, ax=ax)
     st.pyplot(fig)
 
-    st.subheader("Box Plot of Scores by Gender")
+    st.subheader("Study Time vs. GPA")
     fig, ax = plt.subplots()
-    sns.boxplot(x=data1['gender'], y=data1['math score'], ax=ax)
+    sns.scatterplot(x=data1['StudyTimeWeekly'], y=data1['GPA'], hue=data1['Gender'], ax=ax)
     st.pyplot(fig)
 
 elif dataset_name == "GPA and Study Hours":
@@ -76,13 +76,13 @@ elif dataset_name == "GPA and Study Hours":
     # Data Visualization
     st.subheader("Study Hours vs. GPA")
     fig, ax = plt.subplots()
-    sns.scatterplot(x=data2['study_hours'], y=data2['GPA'], ax=ax)
+    sns.scatterplot(x=data2['study_hours'], y=data2['gpa'], ax=ax)
     st.pyplot(fig)
 
     # Model Training and Prediction
     st.subheader("Modeling GPA Based on Study Hours")
     X = data2[['study_hours']]
-    y = data2['GPA']
+    y = data2['gpa']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     lr = LinearRegression()
@@ -102,22 +102,21 @@ elif dataset_name == "First-Year GPA":
     # Questions to Answer
     st.subheader("Research Questions")
     st.write("""
-    1. How do demographic factors like age, gender, and background influence first-year GPA?
+    1. How do factors like high school GPA, SAT scores, and first-generation status influence first-year college GPA?
     2. Is there a significant difference in GPA among students from different socioeconomic backgrounds?
     """)
 
     # Data Visualization
-    st.subheader("Distribution of First-Year GPA by Demographic")
+    st.subheader("Distribution of First-Year GPA")
     fig, ax = plt.subplots()
-    sns.histplot(data3['first_year_gpa'], kde=True, ax=ax)
+    sns.histplot(data3['GPA'], kde=True, ax=ax)
     st.pyplot(fig)
 
-    # Modeling GPA based on demographics (Example with selected features)
+    # Modeling GPA based on selected features
     st.subheader("Predicting First-Year GPA Based on Demographics")
-    selected_features = ['age', 'gender', 'high_school_gpa']  # Replace with relevant columns
+    selected_features = ['HSGPA', 'SATV', 'SATM', 'Male', 'FirstGen']  # Adjusted to available features
     X = data3[selected_features]
-    y = data3['first_year_gpa']
-    X = pd.get_dummies(X, drop_first=True)  # Encoding categorical variables if necessary
+    y = data3['GPA']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     rf = RandomForestRegressor()
